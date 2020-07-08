@@ -1,4 +1,4 @@
-package gg.paiva.jetpackexploration.session.di
+package gg.paiva.jetpackexploration.session.di.jetpack
 
 import android.content.Context
 import androidx.startup.Initializer
