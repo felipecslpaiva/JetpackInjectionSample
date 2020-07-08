@@ -1,13 +1,14 @@
-package gg.paiva.jetpackexploration.session.di
+package gg.paiva.jetpackexploration.session.di.jetpack
 
 import android.content.Context
 import androidx.startup.Initializer
-import androidx.work.WorkManager
 import gg.paiva.jetpackexploration.session.SessionController
+import org.koin.java.KoinJavaComponent.inject
 
 class SessionComponent : Initializer<SessionController>{
-    override fun create(context: Context): SessionController =
-        SessionController(WorkManager.getInstance(context))
+    private val sessionController : SessionController by inject(SessionController::class.java)
+
+    override fun create(context: Context): SessionController = sessionController
 
     //if need extra sub components
     override fun dependencies(): List<Class<out Initializer<*>>> = listOf(WorkManagerComponent::class.java)
