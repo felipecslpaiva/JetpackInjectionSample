@@ -29,7 +29,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="gg.paiva.jetpackexploration.DII"
+                android:name="gg.paiva.jetpackexploration.base.DII"
                 android:value="androidx.startup">
             </meta-data>
         </provider>
