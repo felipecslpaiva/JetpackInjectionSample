@@ -29,7 +29,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class MapFragment : Fragment(), OnMapReadyCallback{
+class MapFragment : Fragment(), OnMapReadyCallback {
     private val mapViewModel: MapViewModel by viewModel()
     private lateinit var binding: FragmentMapBinding
     private lateinit var supportMapFragment: SupportMapFragment
@@ -52,6 +52,12 @@ class MapFragment : Fragment(), OnMapReadyCallback{
             .commitAllowingStateLoss()
         supportMapFragment.getMapAsync(this)
         return binding.root
+    }
+
+    //Map Callback
+    override fun onMapReady(currentGoogleMap: GoogleMap) {
+        googleMap = currentGoogleMap
+        mapViewModel.CameraModelRoot.observe(this, observer)
     }
 
     @SuppressLint("SetTextI18n")
@@ -100,10 +106,5 @@ class MapFragment : Fragment(), OnMapReadyCallback{
         alertDialog.setNeutralButton("Close", DialogInterface.OnClickListener { _, _ -> })
         alertDialog.show()
         return true
-    }
-
-    override fun onMapReady(currentGoogleMap: GoogleMap) {
-        googleMap = currentGoogleMap
-        mapViewModel.CameraModelRoot.observe(this, observer)
     }
 }
