@@ -9,11 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import gg.paiva.jetpackexploration.R
 import gg.paiva.jetpackexploration.databinding.FragmentMapBinding
+import gg.paiva.jetpackexploration.extensions.loadUrl
 import gg.paiva.jetpackexploration.map.models.CameraModelRoot
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -87,23 +88,19 @@ class MapFragment : Fragment(), OnMapReadyCallback{
     }
 
     private fun showImage(marker: Marker?): Boolean {
-        val alertadd: AlertDialog.Builder = AlertDialog.Builder(this.context)
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this.context)
         val factory = LayoutInflater.from(this.context)
         val view: View = factory.inflate(R.layout.dialog_preview, null)
-        Glide
-            .with(this.supportMapFragment)
-            .load(marker?.snippet)
-            .centerCrop()
-            .into(view.findViewById(R.id.dialog_imageview))
-        alertadd.setView(view)
-        alertadd.setNeutralButton("Close", DialogInterface.OnClickListener { dlg, sumthin -> })
-        alertadd.show()
+        val imageView = view.findViewById(R.id.dialog_imageview) as ImageView
+        imageView.loadUrl(marker!!.snippet, imageView)
+        alertDialog.setView(view)
+        alertDialog.setNeutralButton("Close", DialogInterface.OnClickListener { dlg, sumthin -> })
+        alertDialog.show()
         return true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         view.findViewById<Button>(R.id.button_first).setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
