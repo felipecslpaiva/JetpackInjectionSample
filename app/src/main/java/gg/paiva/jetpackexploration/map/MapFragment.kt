@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +37,9 @@ class MapFragment : Fragment(), OnMapReadyCallback{
     private lateinit var supportMapFragment: SupportMapFragment
     private lateinit var googleMap: GoogleMap
     private var isFirst: Boolean = true
-
+    companion object{
+        const val DEFAULT_ZOOM : Float = 12F
+    }
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -57,42 +58,40 @@ class MapFragment : Fragment(), OnMapReadyCallback{
 
     @SuppressLint("SetTextI18n")
     private val observer = Observer<CameraModelRoot> {
-        Log.d("" , it.toString())
-        supportMapFragment.getMapAsync(OnMapReadyCallback { mMap ->
-            googleMap = mMap
-            addMarkers(googleMap, it)
-        })
+        //If there's a content update remove the previous ones
+        googleMap.clear()
+        //adding new markers
+        addMarkers(googleMap, it)
     }
 
-    private fun addMarkers(googleMap: GoogleMap?, cameraModelRoot: CameraModelRoot) {
+    private fun addMarkers(googleMap: GoogleMap, cameraModelRoot: CameraModelRoot) {
         for (camerasList in cameraModelRoot.itemsList){
             for (camera in camerasList.cameras){
-                var marker = MarkerOptions()
+                val marker = MarkerOptions()
                     .position(LatLng(camera.location.latitude, camera.location.longitude))
                     .title(camera.camera_id)
                     .snippet(camera.image)
-                googleMap?.addMarker(marker)
-                googleMap?.setOnMarkerClickListener {
-                    marker -> showImage(marker)
-                }
+                googleMap.addMarker(marker)
+                googleMap.setOnMarkerClickListener{ showImage(it) }
 
                 if(isFirst){
                     val cameraPosition: CameraPosition = CameraPosition.Builder()
                         .target(LatLng(camera.location.latitude, camera.location.longitude))
-                        .zoom(12F).build()
-                    googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                        .zoom(DEFAULT_ZOOM)
+                        .build()
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
                     isFirst = false
                 }
             }
         }
     }
 
-    private fun showImage(marker: Marker?): Boolean {
+    private fun showImage(marker: Marker): Boolean {
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this.context)
         val factory = LayoutInflater.from(this.context)
         val view: View = factory.inflate(R.layout.dialog_preview, null)
         val imageView = view.findViewById(R.id.dialog_imageview) as ImageView
-        imageView.loadUrl(marker!!.snippet, imageView)
+        imageView.loadUrl(marker.snippet, imageView)
         alertDialog.setView(view)
         alertDialog.setNeutralButton("Close", DialogInterface.OnClickListener { dlg, sumthin -> })
         alertDialog.show()
@@ -106,8 +105,8 @@ class MapFragment : Fragment(), OnMapReadyCallback{
         }
     }
 
-    override fun onMapReady(currentGoogleMap: GoogleMap?) {
-        googleMap = currentGoogleMap!!
+    override fun onMapReady(currentGoogleMap: GoogleMap) {
+        googleMap = currentGoogleMap
         mapViewModel.CameraModelRoot.observe(this, observer)
     }
 }
