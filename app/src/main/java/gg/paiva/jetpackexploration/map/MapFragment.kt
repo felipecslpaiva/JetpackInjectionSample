@@ -7,12 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -64,9 +62,13 @@ class MapFragment : Fragment(), OnMapReadyCallback{
         addMarkers(googleMap, it)
     }
 
+    //Could move this to a use case
     private fun addMarkers(googleMap: GoogleMap, cameraModelRoot: CameraModelRoot) {
+        //Going over as many region lists we do have
         for (camerasList in cameraModelRoot.itemsList){
+            //Going over as the cameras for that specific region
             for (camera in camerasList.cameras){
+                //Camera Markers
                 val marker = MarkerOptions()
                     .position(LatLng(camera.location.latitude, camera.location.longitude))
                     .title(camera.camera_id)
@@ -74,6 +76,7 @@ class MapFragment : Fragment(), OnMapReadyCallback{
                 googleMap.addMarker(marker)
                 googleMap.setOnMarkerClickListener{ showImage(it) }
 
+                //Zoom in to the first camera
                 if(isFirst){
                     val cameraPosition: CameraPosition = CameraPosition.Builder()
                         .target(LatLng(camera.location.latitude, camera.location.longitude))
@@ -86,6 +89,7 @@ class MapFragment : Fragment(), OnMapReadyCallback{
         }
     }
 
+    //Could move this to a extension class to be reused
     private fun showImage(marker: Marker): Boolean {
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this.context)
         val factory = LayoutInflater.from(this.context)
@@ -93,16 +97,9 @@ class MapFragment : Fragment(), OnMapReadyCallback{
         val imageView = view.findViewById(R.id.dialog_imageview) as ImageView
         imageView.loadUrl(marker.snippet, imageView)
         alertDialog.setView(view)
-        alertDialog.setNeutralButton("Close", DialogInterface.OnClickListener { dlg, sumthin -> })
+        alertDialog.setNeutralButton("Close", DialogInterface.OnClickListener { _, _ -> })
         alertDialog.show()
         return true
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        view.findViewById<Button>(R.id.button_first).setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
     }
 
     override fun onMapReady(currentGoogleMap: GoogleMap) {
