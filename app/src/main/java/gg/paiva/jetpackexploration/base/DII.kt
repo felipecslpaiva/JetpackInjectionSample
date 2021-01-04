@@ -2,6 +2,9 @@ package gg.paiva.jetpackexploration.base
 
 import android.content.Context
 import androidx.startup.Initializer
+import gg.paiva.jetpackexploration.map.di.cameraRepositoryModule
+import gg.paiva.jetpackexploration.map.di.mapFragmentModule
+import gg.paiva.jetpackexploration.map.di.mapViewModelModule
 import gg.paiva.jetpackexploration.session.di.jetpack.WorkManagerComponent
 import gg.paiva.jetpackexploration.session.di.koin.sessionControllerModule
 import gg.paiva.jetpackexploration.weather.di.secondFragmentModule
@@ -22,7 +25,10 @@ class DII : Initializer<Unit>{
                 weatherRepositoryModule, //Our Weather repository
                 weatherViewModelModule, //Our Weather view model
                 secondFragmentModule, // Our Fragment model
-                sessionControllerModule //Our session controller
+                sessionControllerModule, //Our session controller
+                cameraRepositoryModule, //Our session controller
+                mapFragmentModule, //Our session controller
+                mapViewModelModule //Our session controller
             ))
         }
     }

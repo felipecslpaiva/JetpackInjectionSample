@@ -1,6 +1,7 @@
 package gg.paiva.jetpackexploration.base
 
 import gg.paiva.jetpackexploration.BuildConfig.API_URL
+import gg.paiva.jetpackexploration.map.network.CameraService
 import gg.paiva.jetpackexploration.weather.network.WeatherService
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
@@ -12,6 +13,7 @@ val networkModule = module {
     factory { AuthInterceptor(get()) }
     factory { provideOkHttpClient(get()) }
     factory { provideForecastApi(get()) }
+    factory { provideCameraApi(get()) }
     single { provideRetrofit(get()) }
 }
 
@@ -30,3 +32,6 @@ fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient =
 
 fun provideForecastApi(retrofit: Retrofit): WeatherService =
     retrofit.create(WeatherService::class.java)
+
+fun provideCameraApi(retrofit: Retrofit): CameraService =
+    retrofit.create(CameraService::class.java)
